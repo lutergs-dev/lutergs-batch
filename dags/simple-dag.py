@@ -20,8 +20,6 @@ from airflow.operators.bash import BashOperator
 def operator():
     @task(task_id="simple_print")
     def pass_simple_print_str(ti=None):
-
-        # value 에, 실행할 spring batch jar 의 절대 경로를 작성합니다.
         ti.xcom_push(key="print_str", value="hello world!")
 
     simple_task = pass_simple_print_str()
