@@ -27,8 +27,8 @@ def operator():
     simple_task = pass_simple_print_str()
 
     bash_print = BashOperator(
-        task_id="run_bash_jar",
-        bash_command='echo "received string is {{ task_instance.xcom_pull(task_ids="print string", key="print_str") }}"',
+        task_id="print_string_task",
+        bash_command='echo "received string is {{ task_instance.xcom_pull(task_ids="simple_print", key="print_str") }}"',
         do_xcom_push=False,
     )
 
