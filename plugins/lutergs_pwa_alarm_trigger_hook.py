@@ -20,11 +20,17 @@ class LuterGSPwaAlarmHook(BaseHook):
             self.image_url = image_url
 
         def to_json(self):
-            data = {
-                "title": self.title,
-                "message": self.message,
-                "imageUrl": self.image_url
-            }
+            if self.image_url is not None:
+                data = {
+                    "title": self.title,
+                    "message": self.message,
+                    "imageUrl": self.image_url
+                }
+            else:
+                data = {
+                    "title": self.title,
+                    "message": self.message
+                }
             return json.dumps(data)
 
     def __init__(self,

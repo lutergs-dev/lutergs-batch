@@ -39,8 +39,8 @@ def get_nearest_weather(openweather_response: dict):
 )
 def operator():
 
-    @task(task_id="set_sunrise_info")
-    def _get_openweather_info(ti=None):
+    @task(task_id="set_sunrise_wait_time")
+    def _set_sunrise_wait_time(ti=None):
         hook = OpenWeatherLocationInfoHook(latitude=37.56, longitude=127.00)
         weather_response = hook.get_conn()
 
@@ -52,7 +52,7 @@ def operator():
         ti.xcom_push(key="sunrise_datetime", value=sunrise_datetime)
         ti.xcom_push(key="sunrise_datetime_minus_1_minute", value=sunrise_datetime_minus_1_minute)
 
-    get_openweather_info = _get_openweather_info()
+    set_sunrise_wait_time = _set_sunrise_wait_time()
 
     wait_until_sunrise_minus_1_minute = DateTimeSensorAsync(
         task_id="wait_until_sunrise_minus_1_minute",
@@ -65,13 +65,13 @@ def operator():
     )
 
     @task(task_id="set_sunrise_forecast")
-    def _get_current_forecast(ti=None):
+    def _set_current_forecast(ti=None):
         hook = OpenWeatherLocationInfoHook(latitude=37.56, longitude=127.00)
         weather_response = hook.get_conn()["current"]["weather"]
 
         ti.xcom_push(key="current_forecast", value=weather_response)
 
-    get_current_forecast = _get_current_forecast()
+    set_current_forecast = _set_current_forecast()
 
     @task(task_id="trigger_sunrise_alarm")
     def _trigger_sunrise_alarm(ti=None):
@@ -91,9 +91,9 @@ def operator():
 
     trigger_sunrise_alarm = _trigger_sunrise_alarm()
 
-    get_openweather_info >> wait_until_sunrise_minus_1_minute
-    wait_until_sunrise_minus_1_minute >> [wait_until_sunrise, get_current_forecast]
-    get_current_forecast >> trigger_sunrise_alarm
+    set_sunrise_wait_time >> wait_until_sunrise_minus_1_minute
+    wait_until_sunrise_minus_1_minute >> [wait_until_sunrise, set_current_forecast]
+    set_current_forecast >> trigger_sunrise_alarm
 
 
 operator()
