@@ -14,7 +14,7 @@ class LuterGSPwaAlarmHook(BaseHook):
 
     class LuterGSPwaAlarmRequest:
 
-        def __init__(self, title: str, message: str, image_url: Union[str, None]):
+        def __init__(self, title: str, message: str, image_url: Union[str, None] = None):
             self.title = title
             self.message = message
             self.image_url = image_url
