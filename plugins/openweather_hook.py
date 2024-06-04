@@ -47,4 +47,4 @@ class OpenWeatherLocationInfoHook(BaseHook):
             "lang": self.lang
         }
 
-        return http_hook.run(endpoint="/data/3.0/onecall", params=params)
+        return http_hook.run(endpoint="/data/3.0/onecall", extra_options={'params': params})
