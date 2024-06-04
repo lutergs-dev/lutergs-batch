@@ -39,11 +39,12 @@ class OpenWeatherLocationInfoHook(BaseHook):
         extra_json = json.loads(extra_str)
         token = extra_json["token"]
 
-        return http_hook.run(
-            endpoint=f'/data/3.0/onecall?'
-                     f'appid={token}'
-                     f'&lat{"{:.2f}".format(self.latitude)}'
-                     f'&lon={"{:.2f}".format(self.longitude)}'
-                     f'&units={self.units}'
-                     f'&lang={self.lang}',
-        )
+        params = {
+            "appid": token,
+            "lat": "{:.2f}".format(self.latitude),
+            "lon": "{:.2f}".format(self.longitude),
+            "units": self.units,
+            "lang": self.lang
+        }
+
+        return http_hook.run(endpoint="/data/3.0/onecall", params=params)
