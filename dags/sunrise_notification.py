@@ -39,7 +39,7 @@ def get_nearest_weather(openweather_response: dict):
 )
 def operator():
 
-    @task(task_id="set sunrise info")
+    @task(task_id="set_sunrise_info")
     def _get_openweather_info(ti=None):
         hook = OpenWeatherLocationInfoHook(latitude=37.56, longitude=127.00)
         weather_response = hook.get_conn()
@@ -55,16 +55,16 @@ def operator():
     get_openweather_info = _get_openweather_info()
 
     wait_until_sunrise_minus_1_minute = DateTimeSensorAsync(
-        task_id="wait until sunrise_minus_1_minute",
-        target_time='{{ task_instance.xcom.pull(task_ids="set sunrise info", key="sunrise_datetime_minus_1_minute") }}'
+        task_id="wait_until_sunrise_minus_1_minute",
+        target_time='{{ task_instance.xcom.pull(task_ids="set_sunrise_info", key="sunrise_datetime_minus_1_minute") }}'
     )
 
     wait_until_sunrise = DateTimeSensorAsync(
-        task_id="wait until sunrise",
-        target_time='{{ task_instance.xcom.pull(task_ids="set sunrise info", key="sunrise_datetime") }}'
+        task_id="wait_until_sunrise",
+        target_time='{{ task_instance.xcom.pull(task_ids="set_sunrise_info", key="sunrise_datetime") }}'
     )
 
-    @task(task_id="set sunrise forecast")
+    @task(task_id="set_sunrise_forecast")
     def _get_current_forecast(ti=None):
         hook = OpenWeatherLocationInfoHook(latitude=37.56, longitude=127.00)
         weather_response = hook.get_conn()["current"]["weather"]
@@ -73,11 +73,11 @@ def operator():
 
     get_current_forecast = _get_current_forecast()
 
-    @task(task_id="trigger sunrise alarm")
+    @task(task_id="trigger_sunrise_alarm")
     def _trigger_sunrise_alarm(ti=None):
         sunrise_alarm_id = Variable.get("LUTERGS_PWA_SUNRISE_TOPIC", deserialize_json=False)
 
-        current_weather = ti.xcom_pull(task_ids="set current forecast", key="current_forecast")
+        current_weather = ti.xcom_pull(task_ids="set_current_forecast", key="current_forecast")
 
         hook = LuterGSPwaAlarmHook(
             topic_uuid=sunrise_alarm_id,
