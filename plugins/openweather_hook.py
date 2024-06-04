@@ -35,7 +35,7 @@ class OpenWeatherLocationInfoHook(BaseHook):
         :return:
         """
         http_hook: HttpHook = HttpHook(http_conn_id=self.conn_id, method="GET")
-        extra_str = http_hook.get_connection(http_hook.http_conn_id).get_extra()
+        extra_str = http_hook.get_connection(self.conn_id).get_extra()
         extra_json = json.loads(extra_str)
         token = extra_json["token"]
 

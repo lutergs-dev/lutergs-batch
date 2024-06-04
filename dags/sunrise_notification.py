@@ -93,7 +93,7 @@ def operator():
 
     set_sunrise_wait_time >> wait_until_sunrise_minus_1_minute
     wait_until_sunrise_minus_1_minute >> [wait_until_sunrise, set_current_forecast]
-    set_current_forecast >> trigger_sunrise_alarm
+    wait_until_sunrise >> trigger_sunrise_alarm
 
 
 operator()

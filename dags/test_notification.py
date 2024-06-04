@@ -2,13 +2,9 @@ import datetime
 
 from airflow.decorators import dag, task
 from airflow.models import Variable
-from airflow.operators.python import PythonOperator
 from airflow.sensors.date_time import DateTimeSensorAsync
 
 from lutergs_pwa_alarm_trigger_hook import LuterGSPwaAlarmHook
-
-
-
 
 
 @dag(
@@ -25,7 +21,6 @@ from lutergs_pwa_alarm_trigger_hook import LuterGSPwaAlarmHook
     tags=["lutergs", "test"]
 )
 def operator():
-
     @task(task_id="set_wait_time")
     def _set_wait_time(ti=None):
         wait_complete_datetime = datetime.datetime.now(tz=datetime.timezone.utc) + datetime.timedelta(seconds=30)
@@ -72,7 +67,7 @@ def operator():
 
     set_wait_time >> wait_until_time_minus_15_second
     wait_until_time_minus_15_second >> [wait_until_time, set_message]
-    set_message >> trigger_test_alarm
+    wait_until_time >> trigger_test_alarm
 
 
 operator()
