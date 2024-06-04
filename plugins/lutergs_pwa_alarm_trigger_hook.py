@@ -43,7 +43,7 @@ class LuterGSPwaAlarmHook(BaseHook):
 
     def get_conn(self) -> dict:
         # extra 에 token 이 있다고 가정
-        http_hook: HttpHook = HttpHook(http_conn_id='lutergs_pwa_alarm_hook')
+        http_hook: HttpHook = HttpHook(http_conn_id=self.conn_id, method="POST")
         extra_str = http_hook.get_connection(self.conn_id).get_extra()
         extra_json = json.loads(extra_str)
         token = extra_json["token"]
@@ -52,7 +52,6 @@ class LuterGSPwaAlarmHook(BaseHook):
 
         return http_hook.run(
             endpoint=f'/push/topics/{self.topic_uuid}',
-            method="POST",
             headers={
                 'Authorization': token,
                 'Content-Type': 'application/json'
