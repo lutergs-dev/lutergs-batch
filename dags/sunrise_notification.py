@@ -42,7 +42,7 @@ def operator():
     @task(task_id="set_sunrise_wait_time")
     def _set_sunrise_wait_time(ti=None):
         hook = OpenWeatherLocationInfoHook(latitude=37.56, longitude=127.00)
-        weather_response = hook.get_conn()
+        weather_response = hook.get_conn().json()
 
         sunrise_epoch_second = weather_response["current"]["sunrise"]
 
@@ -67,9 +67,10 @@ def operator():
     @task(task_id="set_sunrise_forecast")
     def _set_current_forecast(ti=None):
         hook = OpenWeatherLocationInfoHook(latitude=37.56, longitude=127.00)
-        weather_response = hook.get_conn()["current"]["weather"]
+        weather_response = hook.get_conn().json()
+        current_weather_forecast = weather_response["current"]["weather"]
 
-        ti.xcom_push(key="current_forecast", value=weather_response)
+        ti.xcom_push(key="current_forecast", value=current_weather_forecast)
 
     set_current_forecast = _set_current_forecast()
 

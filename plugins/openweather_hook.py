@@ -1,6 +1,7 @@
 import json
 import urllib.parse
 
+import requests
 from airflow.hooks.base import BaseHook
 from airflow.providers.http.hooks.http import HttpHook
 
@@ -30,7 +31,7 @@ class OpenWeatherLocationInfoHook(BaseHook):
         self.units = units
         self.lang = lang
 
-    def get_conn(self) -> dict:
+    def get_conn(self) -> requests.Response:
         """
         Get weather info from OpenWeather API
         :return:

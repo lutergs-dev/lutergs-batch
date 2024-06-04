@@ -1,5 +1,6 @@
 import datetime
 
+import requests
 from airflow.decorators import dag, task
 from airflow.models import Variable
 from airflow.sensors.date_time import DateTimeSensorAsync
@@ -45,9 +46,10 @@ def operator():
     @task(task_id="set_message")
     def _set_message(ti=None):
         hook = OpenWeatherLocationInfoHook(latitude=37.56, longitude=127.00)
-        weather_response = hook.get_conn()["current"]["weather"]
+        weather_response = hook.get_conn().json()
+        current_weather_forecast = weather_response.json()["current"]["weather"]
 
-        ti.xcom_push(key="forecast_data", value=weather_response)
+        ti.xcom_push(key="forecast_data", value=current_weather_forecast)
 
     set_message = _set_message()
 

@@ -41,7 +41,7 @@ class LuterGSPwaAlarmHook(BaseHook):
         self.topic_uuid = topic_uuid
         self.alarm_request = alarm_request
 
-    def get_conn(self) -> dict:
+    def get_conn(self) -> requests.Response:
         # extra 에 token 이 있다고 가정
         http_hook: HttpHook = HttpHook(http_conn_id=self.conn_id, method="POST")
         extra_str = http_hook.get_connection(self.conn_id).get_extra()
