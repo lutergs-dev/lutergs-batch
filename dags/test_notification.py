@@ -38,12 +38,12 @@ def operator():
 
     wait_until_time_minus_15_second = DateTimeSensorAsync(
         task_id="wait_until_time_minus_15_second",
-        target_time='{{ task_instance.xcom.pull(task_ids="set_wait_time", key="wait_complete_minus_15_second") }}'
+        target_time='{{ task_instance.xcom_pull(task_ids="set_wait_time", key="wait_complete_minus_15_second") }}'
     )
 
     wait_until_time = DateTimeSensorAsync(
         task_id="wait_until_time",
-        target_time='{{ task_instance.xcom.pull(task_ids="set_wait_time", key="wait_complete_datetime") }}'
+        target_time='{{ task_instance.xcom_pull(task_ids="set_wait_time", key="wait_complete_datetime") }}'
     )
 
     @task(task_id="set_message")
