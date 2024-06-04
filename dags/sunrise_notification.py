@@ -46,22 +46,23 @@ def operator():
 
         sunrise_epoch_second = weather_response["current"]["sunrise"]
 
-        sunrise_datetime = datetime.datetime.fromtimestamp(sunrise_epoch_second, datetime.timezone.utc)  - datetime.timedelta(seconds=2)
-        sunrise_datetime_minus_1_minute = sunrise_datetime - datetime.timedelta(minutes=1)
+        sunrise_datetime = datetime.datetime.fromtimestamp(sunrise_epoch_second, datetime.timezone.utc) - datetime.timedelta(seconds=2)
+        sunrise_datetime_minus_2_minute = sunrise_datetime - datetime.timedelta(minutes=2)
 
         ti.xcom_push(key="sunrise_datetime", value=sunrise_datetime)
-        ti.xcom_push(key="sunrise_datetime_minus_1_minute", value=sunrise_datetime_minus_1_minute)
+        ti.xcom_push(key="sunrise_datetime_minus_2_minute", value=sunrise_datetime_minus_2_minute)
 
     set_sunrise_wait_time = _set_sunrise_wait_time()
 
-    wait_until_sunrise_minus_1_minute = DateTimeSensorAsync(
-        task_id="wait_until_sunrise_minus_1_minute",
-        target_time='{{ task_instance.xcom_pull(task_ids="set_sunrise_info", key="sunrise_datetime_minus_1_minute") }}'
+    wait_until_sunrise_minus_2_minute = DateTimeSensorAsync(
+        task_id="wait_until_sunrise_minus_2_minute",
+        target_time='{{ task_instance.xcom_pull(task_ids="set_sunrise_info", key="sunrise_datetime_minus_2_minute") }}'
     )
 
     wait_until_sunrise = DateTimeSensorAsync(
         task_id="wait_until_sunrise",
-        target_time='{{ task_instance.xcom_pull(task_ids="set_sunrise_info", key="sunrise_datetime") }}'
+        target_time='{{ task_instance.xcom_pull(task_ids="set_sunrise_info", key="sunrise_datetime") }}',
+        poke_interval=datetime.timedelta(seconds=30)
     )
 
     @task(task_id="set_sunrise_forecast")
@@ -92,8 +93,8 @@ def operator():
 
     trigger_sunrise_alarm = _trigger_sunrise_alarm()
 
-    set_sunrise_wait_time >> wait_until_sunrise_minus_1_minute
-    wait_until_sunrise_minus_1_minute >> [wait_until_sunrise, set_current_forecast]
+    set_sunrise_wait_time >> wait_until_sunrise_minus_2_minute
+    wait_until_sunrise_minus_2_minute >> [wait_until_sunrise, set_current_forecast]
     wait_until_sunrise >> trigger_sunrise_alarm
 
 
