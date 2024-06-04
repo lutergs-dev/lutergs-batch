@@ -68,7 +68,7 @@ def operator():
     def _set_current_forecast(ti=None):
         hook = OpenWeatherLocationInfoHook(latitude=37.56, longitude=127.00)
         weather_response = hook.get_conn().json()
-        current_weather_forecast = weather_response["current"]["weather"]
+        current_weather_forecast = weather_response["current"]["weather"][0]
 
         ti.xcom_push(key="current_forecast", value=current_weather_forecast)
 
