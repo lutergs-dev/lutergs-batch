@@ -8,22 +8,6 @@ from openweather_hook import OpenWeatherLocationInfoHook
 from lutergs_pwa_alarm_trigger_hook import LuterGSPwaAlarmHook
 
 
-def get_nearest_weather(openweather_response: dict):
-    sunset_epoch_second = openweather_response["current"]["sunset"]
-    hourly = openweather_response["hourly"]
-    diff = sunset_epoch_second
-    closest_hour_forecast = hourly[0]
-    for hour in hourly:
-        temp_diff = abs(hour["dt"] - sunset_epoch_second)
-        if temp_diff < diff:
-            diff = temp_diff
-            closest_hour_forecast = hour
-        else:
-            break
-    return closest_hour_forecast["weather"]
-
-
-
 @dag(
     dag_id="sunset-alarmer",
     default_args={
@@ -38,7 +22,6 @@ def get_nearest_weather(openweather_response: dict):
     tags=["lutergs"]
 )
 def operator():
-
     @task(task_id="set_sunset_wait_time")
     def _set_sunset_wait_time(ti=None):
         hook = OpenWeatherLocationInfoHook(latitude=37.56, longitude=127.00)
@@ -46,7 +29,8 @@ def operator():
 
         sunset_epoch_second = weather_response["current"]["sunset"]
 
-        sunset_datetime = datetime.datetime.fromtimestamp(sunset_epoch_second, datetime.timezone.utc) - datetime.timedelta(seconds=2)
+        sunset_datetime = datetime.datetime.fromtimestamp(sunset_epoch_second,
+                                                          datetime.timezone.utc) - datetime.timedelta(seconds=2)
         sunset_datetime_minus_2_minute = sunset_datetime - datetime.timedelta(minutes=2)
 
         ti.xcom_push(key="sunset_datetime", value=sunset_datetime)
