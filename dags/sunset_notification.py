@@ -56,12 +56,12 @@ def operator():
 
     wait_until_sunset_minus_2_minute = DateTimeSensorAsync(
         task_id="wait_until_sunset_minus_2_minute",
-        target_time='{{ task_instance.xcom_pull(task_ids="set_sunset_info", key="sunset_datetime_minus_2_minute") }}'
+        target_time='{{ task_instance.xcom_pull(task_ids="set_sunset_wait_time", key="sunset_datetime_minus_2_minute") }}'
     )
 
     wait_until_sunset = DateTimeSensorAsync(
         task_id="wait_until_sunset",
-        target_time='{{ task_instance.xcom_pull(task_ids="set_sunset_info", key="sunset_datetime") }}',
+        target_time='{{ task_instance.xcom_pull(task_ids="set_sunset_wait_time", key="sunset_datetime") }}',
         poke_interval=datetime.timedelta(seconds=30)
     )
 
