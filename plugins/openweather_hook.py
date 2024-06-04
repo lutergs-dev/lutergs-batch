@@ -1,4 +1,5 @@
 import json
+import urllib.parse
 
 from airflow.hooks.base import BaseHook
 from airflow.providers.http.hooks.http import HttpHook
@@ -46,5 +47,6 @@ class OpenWeatherLocationInfoHook(BaseHook):
             "units": self.units,
             "lang": self.lang
         }
+        param_str = urllib.parse.urlencode(params)
 
-        return http_hook.run(endpoint="/data/3.0/onecall", extra_options={'params': params})
+        return http_hook.run(endpoint=f"/data/3.0/onecall?{param_str}")
