@@ -1,6 +1,5 @@
 import datetime
 
-import requests
 from airflow.decorators import dag, task
 from airflow.models import Variable
 from airflow.sensors.date_time import DateTimeSensorAsync

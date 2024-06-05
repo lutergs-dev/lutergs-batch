@@ -63,7 +63,7 @@ def operator():
     def _trigger_sunset_alarm(ti=None):
         sunset_alarm_id = Variable.get("LUTERGS_PWA_SUNSET_TOPIC", deserialize_json=False)
 
-        current_weather = ti.xcom_pull(task_ids="set_current_forecast", key="current_forecast")
+        current_weather = ti.xcom_pull(task_ids="set_sunset_forecast", key="current_forecast")
 
         hook = LuterGSPwaAlarmHook(
             topic_uuid=sunset_alarm_id,
