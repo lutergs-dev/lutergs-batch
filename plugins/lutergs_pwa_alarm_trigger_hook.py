@@ -10,26 +10,26 @@ class LuterGSPwaAlarmHook(BaseHook):
     """
     Interact with LuterGS Pwa alarm trigger
     """
-    conn_id = "lutergs-pwa-connection"
+    _conn_id = "lutergs-pwa-connection"
 
     class LuterGSPwaAlarmRequest:
 
         def __init__(self, title: str, message: str, image_url: Union[str, None] = None):
-            self.title = title
-            self.message = message
-            self.image_url = image_url
+            self._title = title
+            self._message = message
+            self._image_url = image_url
 
         def to_json(self):
-            if self.image_url is not None:
+            if self._image_url is not None:
                 data = {
-                    "title": self.title,
-                    "message": self.message,
-                    "imageUrl": self.image_url
+                    "title": self._title,
+                    "message": self._message,
+                    "imageUrl": self._image_url
                 }
             else:
                 data = {
-                    "title": self.title,
-                    "message": self.message
+                    "title": self._title,
+                    "message": self._message
                 }
             return json.dumps(data)
 
@@ -38,23 +38,21 @@ class LuterGSPwaAlarmHook(BaseHook):
                  alarm_request: LuterGSPwaAlarmRequest,
                  *args, **kwargs):
         super().__init__(*args, **kwargs)
-        self.topic_uuid = topic_uuid
-        self.alarm_request = alarm_request
+        self._topic_uuid = topic_uuid
+        self._alarm_request = alarm_request
 
     def get_conn(self) -> requests.Response:
         # extra 에 token 이 있다고 가정
-        http_hook: HttpHook = HttpHook(http_conn_id=self.conn_id, method="POST")
-        extra_str = http_hook.get_connection(self.conn_id).get_extra()
+        http_hook: HttpHook = HttpHook(http_conn_id=self._conn_id, method="POST")
+        extra_str = http_hook.get_connection(self._conn_id).get_extra()
         extra_json = json.loads(extra_str)
         token = extra_json["token"]
 
-        requests.Request()
-
         return http_hook.run(
-            endpoint=f'/push/topics/{self.topic_uuid}',
+            endpoint=f'/push/topics/{self._topic_uuid}',
             headers={
                 'Authorization': token,
                 'Content-Type': 'application/json'
             },
-            data=self.alarm_request.to_json()
+            data=self._alarm_request.to_json()
         )

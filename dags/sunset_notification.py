@@ -68,8 +68,8 @@ def operator():
         hook = LuterGSPwaAlarmHook(
             topic_uuid=sunset_alarm_id,
             alarm_request=LuterGSPwaAlarmHook.LuterGSPwaAlarmRequest(
-                title="일출입니다!",
-                message=f"해가 떠오릅니다. 지금은 {current_weather["description"]} 날씨입니다.",
+                title="일몰입니다!",
+                message=f"밤이 왔습니다. 지금은 {current_weather["description"]} 날씨입니다.",
                 image_url=f'https://openweathermap.org/img/wn/{current_weather["icon"]}@2x.png'
             )
         )

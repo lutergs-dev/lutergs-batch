@@ -10,7 +10,7 @@ class OpenWeatherLocationInfoHook(BaseHook):
     """
     Interact with OpenWeather API
     """
-    conn_id = "openweather-connection"
+    _conn_id = "openweather-connection"
 
     def __init__(self,
                  latitude: float,
@@ -26,27 +26,27 @@ class OpenWeatherLocationInfoHook(BaseHook):
         :param lang: language code. default to kr (korean)
         """
         super().__init__(*args, **kwargs)
-        self.latitude = latitude
-        self.longitude = longitude
-        self.units = units
-        self.lang = lang
+        self._latitude = latitude
+        self._longitude = longitude
+        self._units = units
+        self._lang = lang
 
     def get_conn(self) -> requests.Response:
         """
         Get weather info from OpenWeather API
         :return:
         """
-        http_hook: HttpHook = HttpHook(http_conn_id=self.conn_id, method="GET")
-        extra_str = http_hook.get_connection(self.conn_id).get_extra()
+        http_hook: HttpHook = HttpHook(http_conn_id=self._conn_id, method="GET")
+        extra_str = http_hook.get_connection(self._conn_id).get_extra()
         extra_json = json.loads(extra_str)
         token = extra_json["token"]
 
         params = {
             "appid": token,
-            "lat": "{:.2f}".format(self.latitude),
-            "lon": "{:.2f}".format(self.longitude),
-            "units": self.units,
-            "lang": self.lang
+            "lat": "{:.2f}".format(self._latitude),
+            "lon": "{:.2f}".format(self._longitude),
+            "units": self._units,
+            "lang": self._lang
         }
         param_str = urllib.parse.urlencode(params)
 
